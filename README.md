@@ -1,23 +1,49 @@
 # Su-Releases
 
-素（Su）的发布页 —— 只放安装包，不放源码。
+素（Su）的安装包发布页。源码不在这里。
 
-每个 release 有四个文件：
+下载请去 [then.md](https://then.md)，或者直接看 [Releases](https://github.com/Quorafind/Su-Releases/releases)。
 
-| 文件 | 是什么 |
+## 每个版本有哪些文件
+
+**Windows**
+
+| 文件 | 说明 |
 | --- | --- |
-| `Su-Setup-<版本>.exe` | Windows 安装包，编辑器打包在里面。装到 `%LOCALAPPDATA%\Programs\Su`（或已有的安装目录），不需要管理员 |
-| `Su-Setup-<版本>.exe.sig` | minisign 签名。编辑器自动更新时校验它，签名不对就不安装 |
-| `Su-Setup-<版本>.exe.sha256` | 手工核对下载用 |
-| `latest-windows-x86_64.json` | 更新清单。已安装的 素 在「关于」页里读 `releases/latest/download/latest-windows-x86_64.json` |
+| `Su-Setup-<版本>.exe` | 安装包，装到 `%LOCALAPPDATA%\Programs\Su`，不需要管理员权限 |
+| `Su-<版本>-portable.zip` | 免安装版，解压后直接运行，不会自动更新 |
+| `Su-Setup.exe`、`Su-Portable.zip` | 同上两个文件，名字里不带版本号，官网的下载按钮用的是它们 |
 
-安装包的命令行参数：
+**macOS**
+
+| 文件 | 说明 |
+| --- | --- |
+| `Su-<版本>-macos-aarch64.dmg` | Apple Silicon |
+| `Su-<版本>-macos-x86_64.dmg` | Intel |
+| `Su-macos-aarch64.dmg`、`Su-macos-x86_64.dmg` | 同上，名字里不带版本号 |
+
+**校验与更新**
+
+| 文件 | 说明 |
+| --- | --- |
+| `*.sha256` | SHA-256 校验值，用来核对下载是否完整 |
+| `*.sig` | minisign 签名，自动更新时用来确认安装包没有被改动过 |
+| `latest-<平台>.json` | 更新清单：版本号、下载地址、签名和更新说明 |
+| `CHANGELOG.md` | 所有版本的更新说明 |
+
+## 自动更新
+
+已安装的素会读取 `latest-<平台>.json`，有新版本时下载安装包，校验签名通过后再安装；签名对不上就不会安装。
+
+Windows 安装包也可以在命令行里用：
 
 ```
 Su-Setup-<版本>.exe [--dir <路径>] [--desktop] [--silent]
 <安装目录>\Su-Uninstall.exe --uninstall [--silent]
 ```
 
-自动更新走的就是 `--silent`：安装包把正在运行的 `Su.exe` 改名挪开，把新的写在旁边，所以更新和安装是同一条路径。
+自动更新就是用 `--silent` 运行安装包。
 
-发布由源码仓库里 `v*` tag 触发的 CI 上传，资产齐全后才从 prerelease 转正 —— 中途失败的发布不会被更新器看见。
+## 发布流程
+
+源码仓库打 `v*` 标签后，CI 构建并上传各平台的文件。所有平台都上传完之前，这个版本一直是预发布状态，自动更新看不到它。
